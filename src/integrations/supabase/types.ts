@@ -99,14 +99,17 @@ export type Database = {
       departments: {
         Row: {
           id: string
+          is_active: boolean
           name: string
         }
         Insert: {
           id?: string
+          is_active?: boolean
           name: string
         }
         Update: {
           id?: string
+          is_active?: boolean
           name?: string
         }
         Relationships: []
