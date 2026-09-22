@@ -331,10 +331,10 @@ function SAModule() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Record Faculty Attendance</CardTitle>
+            <CardTitle>Record Daily Teacher Attendance</CardTitle>
             <CardDescription>
-              Fill in the rows you observed, then submit. Your account ID and an exact timestamp are
-              attached automatically.
+              Tick the attendance status, set room and schedule, add remarks, then submit the batch
+              to HR.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
