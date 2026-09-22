@@ -155,7 +155,7 @@ function HRModule() {
   const { data: departments = [] } = useQuery({
     queryKey: ["departments"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("departments").select("id, name").order("name");
+      const { data, error } = await supabase.from("departments").select("id, name").eq("is_active", true).order("name");
       if (error) throw error;
       return data;
     },

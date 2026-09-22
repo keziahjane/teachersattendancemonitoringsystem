@@ -96,7 +96,7 @@ function SAModule() {
     queryKey: ["departments"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("departments").select("id, name").order("name");
+        const { data, error } = await supabase.from("departments").select("id, name").eq("is_active", true).order("name");
         if (error) throw error;
         cacheRoster({ departments: data });
         return data;
