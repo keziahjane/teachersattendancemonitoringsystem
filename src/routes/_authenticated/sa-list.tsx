@@ -171,8 +171,9 @@ function SaListPage() {
             <div>
               <CardTitle>Student Assistant List</CardTitle>
               <CardDescription>
-                {rows.length} registered Student Assistant{rows.length === 1 ? "" : "s"} —{" "}
-                {rows.filter((r) => r.is_active).length} active. Deactivating an account only
+                {rows.length} approved Student Assistant{rows.length === 1 ? "" : "s"} —{" "}
+                {rows.filter((r) => r.is_active).length} active. Only accounts you have approved
+                appear here; the system never adds names on its own. Deactivating an account only
                 removes system access; every attendance record they submitted stays in the system.
               </CardDescription>
             </div>
