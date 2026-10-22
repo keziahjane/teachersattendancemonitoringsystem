@@ -59,6 +59,7 @@ type SaRow = {
   province: string | null;
   is_active: boolean;
   deactivated_at: string | null;
+  approval_status: string;
 };
 
 function Field({ label, value }: { label: string; value: string | null | undefined }) {
@@ -92,9 +93,10 @@ function SaListPage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, id_number, email, mobile_number, grade_level, course, course_year, class_schedule, birthdate, first_name, middle_name, last_name, street, barangay, city, province, is_active, deactivated_at",
+          "id, full_name, id_number, email, mobile_number, grade_level, course, course_year, class_schedule, birthdate, first_name, middle_name, last_name, street, barangay, city, province, is_active, deactivated_at, approval_status",
         )
         .in("id", ids)
+        .eq("approval_status", "approved")
         .order("full_name");
       if (error) throw error;
       return (data ?? []) as SaRow[];
@@ -169,8 +171,9 @@ function SaListPage() {
             <div>
               <CardTitle>Student Assistant List</CardTitle>
               <CardDescription>
-                {rows.length} registered Student Assistant{rows.length === 1 ? "" : "s"} —{" "}
-                {rows.filter((r) => r.is_active).length} active. Deactivating an account only
+                {rows.length} approved Student Assistant{rows.length === 1 ? "" : "s"} —{" "}
+                {rows.filter((r) => r.is_active).length} active. Only accounts you have approved
+                appear here; the system never adds names on its own. Deactivating an account only
                 removes system access; every attendance record they submitted stays in the system.
               </CardDescription>
             </div>
