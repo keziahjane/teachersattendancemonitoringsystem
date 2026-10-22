@@ -102,15 +102,24 @@ function AuthPage() {
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (busy) return;
     const form = new FormData(e.currentTarget);
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: String(form.get("email")).trim(),
       password: String(form.get("password")),
     });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else toast.success("Signed in");
+    if (error || !data.user) {
+      setBusy(false);
+      toast.error(error?.message ?? "Sign in failed");
+      return;
+    }
+    const { data: roleRow } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id).maybeSingle();
+    await refresh();
+    const { data: s } = await supabase.auth.getSession();
+    if (!s.session) { setBusy(false); return; }
+    toast.success("Signed in");
+    void navigate({ to: roleRow?.role === "hr" ? "/hr" : "/sa", replace: true });
   }
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
