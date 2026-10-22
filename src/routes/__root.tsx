@@ -82,12 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Campus faculty attendance logging for Student Assistants with HR oversight, editing and reporting.",
+          "Campus faculty attendance logging for Student Assistants with Admin oversight, editing and reporting.",
       },
       { property: "og:title", content: "Teachers Attendance Monitoring System" },
       {
         property: "og:description",
-        content: "Student Assistant attendance logging with an HR master table and exports.",
+        content: "Student Assistant attendance logging with an Admin master table and exports.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

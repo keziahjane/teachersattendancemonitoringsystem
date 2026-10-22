@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/sa")({
       { property: "og:title", content: "Student Assistant Attendance Entry" },
       {
         property: "og:description",
-        content: "Log faculty attendance records that sync straight to the HR master table.",
+        content: "Log faculty attendance records that sync straight to the Admin master table.",
       },
     ],
   }),
@@ -157,7 +157,7 @@ function SAModule() {
         }
         if (sent > 0) {
           void queryClient.invalidateQueries({ queryKey: ["my-records"] });
-          toast.success(`${sent} offline record${sent === 1 ? "" : "s"} sent to HR`);
+          toast.success(`${sent} offline record${sent === 1 ? "" : "s"} sent to Admin`);
         }
       } catch (e) {
         if (!silent) toast.error((e as Error).message || "Could not send saved records yet.");
@@ -275,8 +275,8 @@ function SAModule() {
       void queryClient.invalidateQueries({ queryKey: ["my-records"] });
       toast.success(
         offline
-          ? `${saved} record${saved === 1 ? "" : "s"} saved on this device — they will be sent to HR automatically once you are back online.`
-          : `${saved} attendance record${saved === 1 ? "" : "s"} submitted to HR`,
+          ? `${saved} record${saved === 1 ? "" : "s"} saved on this device — they will be sent to Admin automatically once you are back online.`
+          : `${saved} attendance record${saved === 1 ? "" : "s"} submitted to Admin`,
       );
     },
     onError: (e: Error) => toast.error(e.message),
@@ -286,7 +286,7 @@ function SAModule() {
   if (role && role !== "student_assistant") {
     return (
       <div className="min-h-screen">
-        <AppHeader name={fullName} role="HR" />
+        <AppHeader name={fullName} role="Admin" />
         <div className="mx-auto max-w-2xl p-8 text-center text-muted-foreground">
           This module is only available to Student Assistant accounts.
         </div>
@@ -308,7 +308,7 @@ function SAModule() {
           <span className="flex items-center gap-2 font-semibold">
             {online ? <Wifi className="h-4 w-4" /> : <CloudOff className="h-4 w-4" />}
             {online
-              ? "Connected — records are sent to HR right away."
+              ? "Connected — records are sent to Admin right away."
               : "No internet — you can keep recording. Everything is saved on this device."}
           </span>
           {pendingCount > 0 && (
@@ -334,7 +334,7 @@ function SAModule() {
             <CardTitle>Record Daily Teacher Attendance</CardTitle>
             <CardDescription>
               Tick the attendance status, set room and schedule, add remarks, then submit the batch
-              to HR.
+              to Admin.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

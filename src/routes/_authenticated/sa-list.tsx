@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/sa-list")({
       {
         name: "description",
         content:
-          "HR directory of all registered Student Assistants with enrollment, personal and address details, plus account activation control.",
+          "Admin directory of all registered Student Assistants with enrollment, personal and address details, plus account activation control.",
       },
       { property: "og:title", content: "Student Assistant List" },
       {
@@ -136,7 +136,7 @@ function SaListPage() {
       <div className="min-h-screen">
         <AppHeader name={fullName} role="Student Assistant" userId={user?.id} isSA />
         <div className="mx-auto max-w-2xl p-8 text-center text-muted-foreground">
-          This page is only available to HR accounts.
+          This page is only available to Admin accounts.
         </div>
       </div>
     );
@@ -147,7 +147,7 @@ function SaListPage() {
 
   return (
     <div className="min-h-screen campus-bg">
-      <AppHeader name={fullName} role="Human Resources" userId={user?.id} />
+      <AppHeader name={fullName} role="Administrator" userId={user?.id} />
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-8">
         <Card>
           <CardHeader className="gap-3 sm:flex-row sm:items-end sm:justify-between">

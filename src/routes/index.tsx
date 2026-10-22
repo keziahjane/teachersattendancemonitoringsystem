@@ -33,17 +33,17 @@ import { CLASS_SCHEDULES } from "@/lib/attendance-constants";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Teachers Attendance Monitoring System — SA & HR Portal" },
+      { title: "Teachers Attendance Monitoring System — SA & Admin Portal" },
       {
         name: "description",
         content:
-          "Log teachers attendance by department, room and time as a Student Assistant, and monitor, edit and export the master attendance table as HR.",
+          "Log teachers attendance by department, room and time as a Student Assistant, and monitor, edit and export the master attendance table as Admin.",
       },
       { property: "og:title", content: "Teachers Attendance Monitoring System" },
       {
         property: "og:description",
         content:
-          "Role-based attendance logging and HR oversight for campus faculty monitoring.",
+          "Role-based attendance logging and Admin oversight for campus faculty monitoring.",
       },
     ],
   }),
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/")({
 });
 
 const PRIVACY_NOTICE =
-  "Notice: This system is for authorized Student Assistants (SA) and Human Resources (HR) personnel only. All teacher attendance records are confidential and must be used only for official school purposes. Unauthorized access, sharing, copying, or misuse of any information is strictly prohibited and may result in disciplinary action.";
+  "Notice: This system is for authorized Student Assistants (SA) and Administrator (Admin) personnel only. All teacher attendance records are confidential and must be used only for official school purposes. Unauthorized access, sharing, copying, or misuse of any information is strictly prohibited and may result in disciplinary action.";
 
 function PrivacyNotice({ id, checked, onChange }: { id: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -165,7 +165,7 @@ function AuthPage() {
     }
     await supabase.auth.signOut();
     toast.success(
-      "Account created — your registration was sent to HR for approval. You can sign in once it is approved.",
+      "Account created — your registration was sent to Admin for approval. You can sign in once it is approved.",
     );
     await refresh();
 
@@ -189,7 +189,7 @@ function AuthPage() {
         <Card className="self-center shadow-lg">
           <CardHeader>
             <CardTitle>Account Access</CardTitle>
-            <CardDescription>Sign in or register your Student Assistant / HR account.</CardDescription>
+            <CardDescription>Sign in or register your Student Assistant / Admin account.</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="login">
@@ -227,7 +227,7 @@ function AuthPage() {
                 <form className="space-y-4 pt-4" onSubmit={handleSignUp}>
                   <p className="text-xs font-bold text-muted-foreground">
                     All fields marked <span className="text-destructive">*</span> are required. New
-                    accounts need HR approval before the first sign in.
+                    accounts need Admin approval before the first sign in.
                   </p>
                   <div className="space-y-2">
                     <Label htmlFor="full_name">Full Name <span className="text-destructive">*</span></Label>
@@ -246,7 +246,7 @@ function AuthPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="student_assistant">Student Assistant</SelectItem>
-                          <SelectItem value="hr">HR</SelectItem>
+                          <SelectItem value="hr">Admin</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
