@@ -66,13 +66,13 @@ import { PasswordInput } from "@/components/PasswordInput";
 export const Route = createFileRoute("/_authenticated/hr")({
   head: () => ({
     meta: [
-      { title: "Master Attendance Table — HR Module" },
+      { title: "Master Attendance Table — Admin Module" },
       {
         name: "description",
         content:
           "Monitor every faculty attendance entry grouped by date, filter by department or teacher, correct records with audit timestamps, and export to Excel, PDF or print.",
       },
-      { property: "og:title", content: "HR Master Attendance Table" },
+      { property: "og:title", content: "Admin Master Attendance Table" },
       {
         property: "og:description",
         content: "Oversight, editing and reporting for campus faculty attendance records.",
@@ -130,7 +130,7 @@ function HRModule() {
   const [page, setPage] = useState(0);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
-  // Batch keys (date|time|submitter) HR has already reviewed from a notification.
+  // Batch keys (date|time|submitter) Admin has already reviewed from a notification.
   const [reviewedKeys, setReviewedKeys] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
     try {
@@ -413,7 +413,7 @@ function HRModule() {
       <div className="min-h-screen">
         <AppHeader name={fullName} role="Student Assistant" userId={user?.id} isSA />
         <div className="mx-auto max-w-2xl p-8 text-center text-muted-foreground">
-          This module is only available to HR accounts.
+          This module is only available to Admin accounts.
         </div>
       </div>
     );
@@ -421,7 +421,7 @@ function HRModule() {
 
   return (
     <div className="min-h-screen campus-bg">
-      <AppHeader name={fullName} role="Human Resources" userId={user?.id} />
+      <AppHeader name={fullName} role="Administrator" userId={user?.id} />
       <main className="mx-auto max-w-[95rem] space-y-6 px-4 py-8">
         <Card className="no-print">
           <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
@@ -897,7 +897,7 @@ function HRModule() {
             <DialogTitle>Edit Attendance Record</DialogTitle>
             <DialogDescription>
               {editing?.teachers?.full_name} · {editing?.departments?.name}. An edit timestamp and
-              your HR account ID are recorded automatically.
+              your Admin account ID are recorded automatically.
             </DialogDescription>
           </DialogHeader>
           {editing && (

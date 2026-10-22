@@ -100,7 +100,7 @@ function SAHistory() {
   if (role && role !== "student_assistant") {
     return (
       <div className="min-h-screen">
-        <AppHeader name={fullName} role="HR" userId={user?.id} />
+        <AppHeader name={fullName} role="Admin" userId={user?.id} />
         <div className="mx-auto max-w-2xl p-8 text-center text-muted-foreground">
           This page is only available to Student Assistant accounts.
         </div>

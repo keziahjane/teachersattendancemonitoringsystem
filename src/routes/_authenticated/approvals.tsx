@@ -17,12 +17,12 @@ export const Route = createFileRoute("/_authenticated/approvals")({
       {
         name: "description",
         content:
-          "HR review queue for new Student Assistant and HR sign-up requests: approve or reject each account before it can access the system.",
+          "Admin review queue for new Student Assistant and Admin sign-up requests: approve or reject each account before it can access the system.",
       },
       { property: "og:title", content: "Account Approval" },
       {
         property: "og:description",
-        content: "Approve or reject pending Student Assistant and HR account registrations.",
+        content: "Approve or reject pending Student Assistant and Admin account registrations.",
       },
     ],
   }),
@@ -117,18 +117,18 @@ function ApprovalsPage() {
       <div className="min-h-screen">
         <AppHeader name={fullName} role="Student Assistant" userId={user?.id} isSA />
         <div className="mx-auto max-w-2xl p-8 text-center text-muted-foreground">
-          This page is only available to HR accounts.
+          This page is only available to Admin accounts.
         </div>
       </div>
     );
   }
 
   const roleLabel = (r: string) =>
-    r === "hr" ? "Human Resources" : r === "student_assistant" ? "Student Assistant" : "—";
+    r === "hr" ? "Administrator" : r === "student_assistant" ? "Student Assistant" : "—";
 
   return (
     <div className="min-h-screen campus-bg">
-      <AppHeader name={fullName} role="Human Resources" userId={user?.id} />
+      <AppHeader name={fullName} role="Administrator" userId={user?.id} />
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-8">
         <Card>
           <CardHeader className="gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -136,7 +136,7 @@ function ApprovalsPage() {
               <CardTitle>Account Approval</CardTitle>
               <CardDescription>
                 {pendingCount} account{pendingCount === 1 ? "" : "s"} awaiting your decision. New
-                Student Assistant and HR sign-ups stay locked out until you approve them here.
+                Student Assistant and Admin sign-ups stay locked out until you approve them here.
               </CardDescription>
             </div>
             <Input

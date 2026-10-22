@@ -41,10 +41,10 @@ export function useSession() {
         const { toast } = await import("sonner");
         toast.error(
           pending
-            ? "Your account is waiting for HR approval. Please try again once it has been approved."
+            ? "Your account is waiting for Admin approval. Please try again once it has been approved."
             : rejected
-              ? "Your account registration was rejected by HR. Please contact the HR office."
-              : "This account has been deactivated by HR. Please contact the HR office.",
+              ? "Your account registration was rejected by Admin. Please contact the Admin office."
+              : "This account has been deactivated by Admin. Please contact the Admin office.",
         );
       }
       return;

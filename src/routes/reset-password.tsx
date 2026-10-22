@@ -14,7 +14,7 @@ export const Route = createFileRoute("/reset-password")({
       {
         name: "description",
         content:
-          "Set a new password for your Student Assistant or HR account on the Teachers Attendance Monitoring System.",
+          "Set a new password for your Student Assistant or Admin account on the Teachers Attendance Monitoring System.",
       },
       { property: "og:title", content: "Reset Password — Teachers Attendance Monitoring System" },
       {

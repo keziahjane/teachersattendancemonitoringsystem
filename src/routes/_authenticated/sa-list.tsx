@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteDeactivatedSa } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 import { AppHeader } from "@/components/AppHeader";
@@ -25,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/sa-list")({
       {
         name: "description",
         content:
-          "HR directory of all registered Student Assistants with enrollment, personal and address details, plus account activation control.",
+          "Admin directory of all registered Student Assistants with enrollment, personal and address details, plus account activation control.",
       },
       { property: "og:title", content: "Student Assistant List" },
       {
@@ -121,6 +123,19 @@ function SaListPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const [delTarget, setDelTarget] = useState<SaRow | null>(null);
+  const deleteFn = useServerFn(deleteDeactivatedSa);
+  const deleteAcc = useMutation({
+    mutationFn: async (id: string) => deleteFn({ data: { id } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["sa-directory"] });
+      setDelTarget(null);
+      setSelected(null);
+      toast.success("Account deleted. Their attendance records are kept.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return rows;
@@ -136,7 +151,7 @@ function SaListPage() {
       <div className="min-h-screen">
         <AppHeader name={fullName} role="Student Assistant" userId={user?.id} isSA />
         <div className="mx-auto max-w-2xl p-8 text-center text-muted-foreground">
-          This page is only available to HR accounts.
+          This page is only available to Admin accounts.
         </div>
       </div>
     );
@@ -147,7 +162,7 @@ function SaListPage() {
 
   return (
     <div className="min-h-screen campus-bg">
-      <AppHeader name={fullName} role="Human Resources" userId={user?.id} />
+      <AppHeader name={fullName} role="Administrator" userId={user?.id} />
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-8">
         <Card>
           <CardHeader className="gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -206,7 +221,7 @@ function SaListPage() {
                             {r.is_active ? "Active" : "Deactivated"}
                           </Badge>
                         </td>
-                        <td className="p-2 text-right">
+                        <td className="space-x-2 whitespace-nowrap p-2 text-right">
                           <Button
                             size="sm"
                             variant={r.is_active ? "destructive" : "secondary"}
@@ -214,6 +229,11 @@ function SaListPage() {
                           >
                             {r.is_active ? "Deactivate" : "Reactivate"}
                           </Button>
+                          {!r.is_active && (
+                            <Button size="sm" variant="destructive" onClick={() => setDelTarget(r)}>
+                              Delete
+                            </Button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -311,6 +331,27 @@ function SaListPage() {
                 : confirm?.is_active
                   ? "Yes, deactivate"
                   : "Yes, reactivate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!delTarget} onOpenChange={(o) => !o && setDelTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Permanently delete this account?</DialogTitle>
+            <DialogDescription>
+              {`${delTarget?.full_name}'s account will be permanently deleted. Their submitted attendance records stay in the system with their name and ID number. This cannot be undone.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDelTarget(null)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              disabled={deleteAcc.isPending}
+              onClick={() => delTarget && deleteAcc.mutate(delTarget.id)}
+            >
+              {deleteAcc.isPending ? "Deleting…" : "Yes, delete account"}
             </Button>
           </DialogFooter>
         </DialogContent>
