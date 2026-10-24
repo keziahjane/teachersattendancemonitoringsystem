@@ -284,11 +284,16 @@ function SaListPage() {
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selected?.full_name}</DialogTitle>
-            <DialogDescription>
-              Student Assistant profile · ID {selected?.id_number ?? "—"} ·{" "}
-              {selected?.is_active ? "Active account" : "Deactivated account"}
-            </DialogDescription>
+            <div className="flex items-center gap-4">
+              {selected && <SaAvatar row={selected} className="h-16 w-16" />}
+              <div>
+                <DialogTitle>{selected?.full_name}</DialogTitle>
+                <DialogDescription>
+                  Student Assistant profile · ID {selected?.id_number ?? "—"} ·{" "}
+                  {selected?.is_active ? "Active account" : "Deactivated account"}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           {selected && (
             <div className="space-y-5">
