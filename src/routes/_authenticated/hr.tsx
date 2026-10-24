@@ -110,6 +110,33 @@ function statusVariant(s: RecordRow["attendance_status"]) {
   return s === "Present" ? "default" : s === "Late" ? "secondary" : "destructive";
 }
 
+function AdminAvatar({ name, photoPath }: { name: string; photoPath: string | null }) {
+  const { data: url } = useQuery({
+    queryKey: ["admin-photo", photoPath],
+    enabled: !!photoPath,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from("profile-photos")
+        .createSignedUrl(photoPath!, 3600);
+      if (error) throw error;
+      return data.signedUrl;
+    },
+  });
+  const initials = name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+  return (
+    <Avatar className="h-10 w-10">
+      <AvatarImage src={url} alt={`${name} profile`} className="object-cover" />
+      <AvatarFallback className="font-bold">{initials}</AvatarFallback>
+    </Avatar>
+  );
+}
+
 function HRModule() {
   const { user, role, fullName } = useSession();
   const queryClient = useQueryClient();
