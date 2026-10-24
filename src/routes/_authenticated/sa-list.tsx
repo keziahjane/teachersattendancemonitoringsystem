@@ -223,6 +223,7 @@ function SaListPage() {
                 <table className="w-full min-w-[900px] border-collapse text-sm">
                   <thead>
                     <tr className="bg-secondary/60 text-left">
+                      <th className="p-2 font-bold">Photo</th>
                       <th className="p-2 font-bold">Full Name</th>
                       <th className="p-2 font-bold">ID Number</th>
                       <th className="p-2 font-bold">Course &amp; Year</th>
