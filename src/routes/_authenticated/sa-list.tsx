@@ -7,6 +7,7 @@ import { deleteDeactivatedSa } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 import { AppHeader } from "@/components/AppHeader";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -60,7 +61,35 @@ type SaRow = {
   is_active: boolean;
   deactivated_at: string | null;
   approval_status: string;
+  photo_path: string | null;
 };
+
+function SaAvatar({ row, className }: { row: SaRow; className?: string }) {
+  const { data: url } = useQuery({
+    queryKey: ["sa-list-photo", row.photo_path],
+    enabled: !!row.photo_path,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from("profile-photos")
+        .createSignedUrl(row.photo_path!, 3600);
+      if (error) throw error;
+      return data.signedUrl;
+    },
+  });
+  const initials = row.full_name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+  return (
+    <Avatar className={className}>
+      <AvatarImage src={url} alt={`${row.full_name} profile`} className="object-cover" />
+      <AvatarFallback className="font-bold">{initials}</AvatarFallback>
+    </Avatar>
+  );
+}
 
 function Field({ label, value }: { label: string; value: string | null | undefined }) {
   return (
@@ -93,7 +122,7 @@ function SaListPage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, id_number, email, mobile_number, grade_level, course, course_year, class_schedule, birthdate, first_name, middle_name, last_name, street, barangay, city, province, is_active, deactivated_at, approval_status",
+          "id, full_name, id_number, email, mobile_number, grade_level, course, course_year, class_schedule, birthdate, first_name, middle_name, last_name, street, barangay, city, province, is_active, deactivated_at, approval_status, photo_path",
         )
         .in("id", ids)
         .eq("approval_status", "approved")
@@ -194,6 +223,7 @@ function SaListPage() {
                 <table className="w-full min-w-[900px] border-collapse text-sm">
                   <thead>
                     <tr className="bg-secondary/60 text-left">
+                      <th className="p-2 font-bold">Photo</th>
                       <th className="p-2 font-bold">Full Name</th>
                       <th className="p-2 font-bold">ID Number</th>
                       <th className="p-2 font-bold">Course &amp; Year</th>
@@ -206,6 +236,9 @@ function SaListPage() {
                   <tbody>
                     {filtered.map((r) => (
                       <tr key={r.id} className="border-t border-border align-top">
+                        <td className="p-2">
+                          <SaAvatar row={r} className="h-10 w-10" />
+                        </td>
                         <td className="p-2">
                           <button
                             type="button"
@@ -251,11 +284,16 @@ function SaListPage() {
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selected?.full_name}</DialogTitle>
-            <DialogDescription>
-              Student Assistant profile · ID {selected?.id_number ?? "—"} ·{" "}
-              {selected?.is_active ? "Active account" : "Deactivated account"}
-            </DialogDescription>
+            <div className="flex items-center gap-4">
+              {selected && <SaAvatar row={selected} className="h-16 w-16" />}
+              <div>
+                <DialogTitle>{selected?.full_name}</DialogTitle>
+                <DialogDescription>
+                  Student Assistant profile · ID {selected?.id_number ?? "—"} ·{" "}
+                  {selected?.is_active ? "Active account" : "Deactivated account"}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           {selected && (
             <div className="space-y-5">
