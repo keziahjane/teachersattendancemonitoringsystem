@@ -122,7 +122,7 @@ function SaListPage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, id_number, email, mobile_number, grade_level, course, course_year, class_schedule, birthdate, first_name, middle_name, last_name, street, barangay, city, province, is_active, deactivated_at, approval_status",
+          "id, full_name, id_number, email, mobile_number, grade_level, course, course_year, class_schedule, birthdate, first_name, middle_name, last_name, street, barangay, city, province, is_active, deactivated_at, approval_status, photo_path",
         )
         .in("id", ids)
         .eq("approval_status", "approved")
