@@ -60,7 +60,35 @@ type SaRow = {
   is_active: boolean;
   deactivated_at: string | null;
   approval_status: string;
+  photo_path: string | null;
 };
+
+function SaAvatar({ row, className }: { row: SaRow; className?: string }) {
+  const { data: url } = useQuery({
+    queryKey: ["sa-list-photo", row.photo_path],
+    enabled: !!row.photo_path,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from("profile-photos")
+        .createSignedUrl(row.photo_path!, 3600);
+      if (error) throw error;
+      return data.signedUrl;
+    },
+  });
+  const initials = row.full_name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+  return (
+    <Avatar className={className}>
+      <AvatarImage src={url} alt={`${row.full_name} profile`} className="object-cover" />
+      <AvatarFallback className="font-bold">{initials}</AvatarFallback>
+    </Avatar>
+  );
+}
 
 function Field({ label, value }: { label: string; value: string | null | undefined }) {
   return (
