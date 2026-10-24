@@ -237,6 +237,9 @@ function SaListPage() {
                     {filtered.map((r) => (
                       <tr key={r.id} className="border-t border-border align-top">
                         <td className="p-2">
+                          <SaAvatar row={r} className="h-10 w-10" />
+                        </td>
+                        <td className="p-2">
                           <button
                             type="button"
                             className="font-bold underline underline-offset-2"
