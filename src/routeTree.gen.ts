@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAdminAccountsRouteImport } from './routes/_authenticated/admin-accounts'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
 import { Route as AuthenticatedHrRouteImport } from './routes/_authenticated/hr'
 import { Route as AuthenticatedSaRouteImport } from './routes/_authenticated/sa'
@@ -32,6 +33,12 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminAccountsRoute =
+  AuthenticatedAdminAccountsRouteImport.update({
+    id: '/admin-accounts',
+    path: '/admin-accounts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
@@ -61,6 +68,7 @@ const AuthenticatedSaListRoute = AuthenticatedSaListRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin-accounts': typeof AuthenticatedAdminAccountsRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/hr': typeof AuthenticatedHrRoute
   '/sa': typeof AuthenticatedSaRoute
@@ -70,6 +78,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin-accounts': typeof AuthenticatedAdminAccountsRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/hr': typeof AuthenticatedHrRoute
   '/sa': typeof AuthenticatedSaRoute
@@ -81,6 +90,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin-accounts': typeof AuthenticatedAdminAccountsRoute
   '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
   '/_authenticated/hr': typeof AuthenticatedHrRoute
   '/_authenticated/sa': typeof AuthenticatedSaRoute
@@ -92,6 +102,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/reset-password'
+    | '/admin-accounts'
     | '/approvals'
     | '/hr'
     | '/sa'
@@ -101,6 +112,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/reset-password'
+    | '/admin-accounts'
     | '/approvals'
     | '/hr'
     | '/sa'
@@ -111,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/reset-password'
+    | '/_authenticated/admin-accounts'
     | '/_authenticated/approvals'
     | '/_authenticated/hr'
     | '/_authenticated/sa'
@@ -146,6 +159,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin-accounts': {
+      id: '/_authenticated/admin-accounts'
+      path: '/admin-accounts'
+      fullPath: '/admin-accounts'
+      preLoaderRoute: typeof AuthenticatedAdminAccountsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/approvals': {
       id: '/_authenticated/approvals'
@@ -186,6 +206,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminAccountsRoute: typeof AuthenticatedAdminAccountsRoute
   AuthenticatedApprovalsRoute: typeof AuthenticatedApprovalsRoute
   AuthenticatedHrRoute: typeof AuthenticatedHrRoute
   AuthenticatedSaRoute: typeof AuthenticatedSaRoute
@@ -194,6 +215,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminAccountsRoute: AuthenticatedAdminAccountsRoute,
   AuthenticatedApprovalsRoute: AuthenticatedApprovalsRoute,
   AuthenticatedHrRoute: AuthenticatedHrRoute,
   AuthenticatedSaRoute: AuthenticatedSaRoute,
