@@ -512,6 +512,52 @@ function HRModule() {
               ))}
           </CardContent>
         </Card>
+        <Card className="no-print">
+          <CardHeader>
+            <CardTitle>Registered Admin Accounts</CardTitle>
+            <CardDescription>
+              {adminAccounts.length} registered Admin account
+              {adminAccounts.length === 1 ? "" : "s"} with access to this dashboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {adminAccounts.length === 0 ? (
+              <p className="text-muted-foreground">No Admin accounts found.</p>
+            ) : (
+              <div className="overflow-x-auto rounded-md border border-border">
+                <table className="w-full min-w-[520px] border-collapse text-sm">
+                  <thead>
+                    <tr className="bg-secondary/60 text-left">
+                      <th className="p-2 font-bold">Photo</th>
+                      <th className="p-2 font-bold">Full Name</th>
+                      <th className="p-2 font-bold">Email</th>
+                      <th className="p-2 font-bold">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {adminAccounts.map((a) => (
+                      <tr key={a.id} className="border-t border-border">
+                        <td className="p-2">
+                          <AdminAvatar
+                            name={a.full_name}
+                            photoPath={a.photo_path}
+                          />
+                        </td>
+                        <td className="p-2 font-bold">{a.full_name}</td>
+                        <td className="break-all p-2">{a.email}</td>
+                        <td className="p-2">
+                          <Badge variant={a.is_active ? "default" : "destructive"}>
+                            {a.is_active ? "Active" : "Deactivated"}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader className="no-print flex flex-row flex-wrap items-start justify-between gap-3 space-y-0">
             <div className="space-y-1.5">
