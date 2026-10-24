@@ -191,6 +191,26 @@ function HRModule() {
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;
 
+  const { data: adminAccounts = [] } = useQuery({
+    queryKey: ["admin-accounts"],
+    queryFn: async () => {
+      const { data: roleRows, error: roleErr } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "hr");
+      if (roleErr) throw roleErr;
+      const ids = (roleRows ?? []).map((r) => r.user_id);
+      if (ids.length === 0) return [] as { id: string; full_name: string; email: string; is_active: boolean; approval_status: string; photo_path: string | null }[];
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, is_active, approval_status, photo_path")
+        .in("id", ids)
+        .order("full_name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const markRead = useMutation({
     mutationFn: async (id?: string) => {
       const query = supabase
