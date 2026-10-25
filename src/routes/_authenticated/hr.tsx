@@ -67,6 +67,8 @@ export const Route = createFileRoute("/_authenticated/hr")({
   head: () => ({
     meta: [
       { title: "Master Attendance Table — Admin Module" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:
@@ -108,33 +110,6 @@ function dateKey(d: Date) {
 
 function statusVariant(s: RecordRow["attendance_status"]) {
   return s === "Present" ? "default" : s === "Late" ? "secondary" : "destructive";
-}
-
-function AdminAvatar({ name, photoPath }: { name: string; photoPath: string | null }) {
-  const { data: url } = useQuery({
-    queryKey: ["admin-photo", photoPath],
-    enabled: !!photoPath,
-    staleTime: 5 * 60 * 1000,
-    queryFn: async () => {
-      const { data, error } = await supabase.storage
-        .from("profile-photos")
-        .createSignedUrl(photoPath!, 3600);
-      if (error) throw error;
-      return data.signedUrl;
-    },
-  });
-  const initials = name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((p) => p[0])
-    .join("")
-    .toUpperCase();
-  return (
-    <Avatar className="h-10 w-10">
-      <AvatarImage src={url} alt={`${name} profile`} className="object-cover" />
-      <AvatarFallback className="font-bold">{initials}</AvatarFallback>
-    </Avatar>
-  );
 }
 
 function HRModule() {
@@ -217,26 +192,6 @@ function HRModule() {
   });
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;
-
-  const { data: adminAccounts = [] } = useQuery({
-    queryKey: ["admin-accounts"],
-    queryFn: async () => {
-      const { data: roleRows, error: roleErr } = await supabase
-        .from("user_roles")
-        .select("user_id")
-        .eq("role", "hr");
-      if (roleErr) throw roleErr;
-      const ids = (roleRows ?? []).map((r) => r.user_id);
-      if (ids.length === 0) return [] as { id: string; full_name: string; email: string; is_active: boolean; approval_status: string; photo_path: string | null }[];
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, full_name, email, is_active, approval_status, photo_path")
-        .in("id", ids)
-        .order("full_name");
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
 
   const markRead = useMutation({
     mutationFn: async (id?: string) => {
@@ -537,52 +492,6 @@ function HRModule() {
                   </span>
                 </div>
               ))}
-          </CardContent>
-        </Card>
-        <Card className="no-print">
-          <CardHeader>
-            <CardTitle>Registered Admin Accounts</CardTitle>
-            <CardDescription>
-              {adminAccounts.length} registered Admin account
-              {adminAccounts.length === 1 ? "" : "s"} with access to this dashboard.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {adminAccounts.length === 0 ? (
-              <p className="text-muted-foreground">No Admin accounts found.</p>
-            ) : (
-              <div className="overflow-x-auto rounded-md border border-border">
-                <table className="w-full min-w-[520px] border-collapse text-sm">
-                  <thead>
-                    <tr className="bg-secondary/60 text-left">
-                      <th className="p-2 font-bold">Photo</th>
-                      <th className="p-2 font-bold">Full Name</th>
-                      <th className="p-2 font-bold">Email</th>
-                      <th className="p-2 font-bold">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {adminAccounts.map((a) => (
-                      <tr key={a.id} className="border-t border-border">
-                        <td className="p-2">
-                          <AdminAvatar
-                            name={a.full_name}
-                            photoPath={a.photo_path}
-                          />
-                        </td>
-                        <td className="p-2 font-bold">{a.full_name}</td>
-                        <td className="break-all p-2">{a.email}</td>
-                        <td className="p-2">
-                          <Badge variant={a.is_active ? "default" : "destructive"}>
-                            {a.is_active ? "Active" : "Deactivated"}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
           </CardContent>
         </Card>
         <Card>

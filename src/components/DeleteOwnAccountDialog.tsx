@@ -23,7 +23,7 @@ export function DeleteOwnAccountDialog({ open, onOpenChange }: { open: boolean; 
     if (busy || !isDeletionConfirmed(confirmation)) return;
     setBusy(true);
     try {
-      await deleteAccount();
+      await deleteAccount({ data: { confirmation } });
       await queryClient.cancelQueries();
       queryClient.clear();
       await supabase.auth.signOut({ scope: "local" });

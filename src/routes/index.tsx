@@ -34,6 +34,8 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Teachers Attendance Monitoring System — SA & Admin Portal" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:
