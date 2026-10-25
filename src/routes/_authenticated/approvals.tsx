@@ -14,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/approvals")({
   head: () => ({
     meta: [
       { title: "Account Approval — Attendance Monitoring" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:

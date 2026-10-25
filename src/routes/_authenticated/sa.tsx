@@ -44,6 +44,8 @@ export const Route = createFileRoute("/_authenticated/sa")({
   head: () => ({
     meta: [
       { title: "Record Attendance — Student Assistant Module" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:

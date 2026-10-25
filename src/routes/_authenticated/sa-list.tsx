@@ -25,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/sa-list")({
   head: () => ({
     meta: [
       { title: "Student Assistant List — Attendance Monitoring" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:

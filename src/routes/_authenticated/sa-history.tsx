@@ -14,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/sa-history")({
   head: () => ({
     meta: [
       { title: "My Recent History — Student Assistant Submissions" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:
