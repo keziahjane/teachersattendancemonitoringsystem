@@ -11,6 +11,8 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { data: isAdmin, error: roleError } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "hr" });
     if (roleError || !isAdmin) throw new Error("Only Admin accounts can delete their own account here.");
+    const { data: profile, error: profileError } = await context.supabase.from("profiles").select("approval_status, is_active").eq("id", context.userId).maybeSingle();
+    if (profileError || !profile?.is_active || profile.approval_status !== "approved") throw new Error("Your Admin account must be approved and active before deleting it here.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
     if (error) throw new Error(error.message);
