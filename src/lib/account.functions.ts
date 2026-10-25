@@ -1,9 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isDeletionConfirmed } from "@/lib/admin-accounts";
 
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
+  .inputValidator((data: { confirmation: string }) => {
+    if (!data || !isDeletionConfirmed(data.confirmation)) throw new Error("Type DELETE to confirm account deletion.");
+    return data;
+  })
   .handler(async ({ context }) => {
+    const { data: isAdmin, error: roleError } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "hr" });
+    if (roleError || !isAdmin) throw new Error("Only Admin accounts can delete their own account here.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
     if (error) throw new Error(error.message);
