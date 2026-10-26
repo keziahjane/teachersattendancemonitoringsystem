@@ -363,8 +363,8 @@ function HRModule() {
         .from("attendance_records")
         .update({
           room_assignment: patch.room_assignment,
-          time_arrival: patch.time_arrival,
-          time_out: patch.time_out,
+          time_arrival: patch.time_arrival || null,
+          time_out: patch.time_out || null,
           attendance_status: patch.attendance_status,
           remarks: patch.remarks,
           last_edited_by: user.id,
