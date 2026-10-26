@@ -923,10 +923,13 @@ function HRModule() {
                   <Label>Time In</Label>
                   <Select
                     value={editing.time_arrival?.slice(0, 5) ?? ""}
-                    onValueChange={(v) => setEditing({ ...editing, time_arrival: v })}
+                    onValueChange={(v) =>
+                      setEditing({ ...editing, time_arrival: v === "__clear__" ? "" : v })
+                    }
                   >
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent className="max-h-72">
+                      <SelectItem value="__clear__">Clear</SelectItem>
                       {TIME_SLOTS.map((s) => (
                         <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                       ))}
