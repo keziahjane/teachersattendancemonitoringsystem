@@ -940,10 +940,13 @@ function HRModule() {
                   <Label>Time Out</Label>
                   <Select
                     value={editing.time_out?.slice(0, 5) ?? ""}
-                    onValueChange={(v) => setEditing({ ...editing, time_out: v })}
+                    onValueChange={(v) =>
+                      setEditing({ ...editing, time_out: v === "__clear__" ? "" : v })
+                    }
                   >
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent className="max-h-72">
+                      <SelectItem value="__clear__">Clear</SelectItem>
                       {TIME_SLOTS.map((s) => (
                         <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                       ))}
