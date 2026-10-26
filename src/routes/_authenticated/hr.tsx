@@ -363,8 +363,8 @@ function HRModule() {
         .from("attendance_records")
         .update({
           room_assignment: patch.room_assignment,
-          time_arrival: patch.time_arrival,
-          time_out: patch.time_out,
+          time_arrival: patch.time_arrival || null,
+          time_out: patch.time_out || null,
           attendance_status: patch.attendance_status,
           remarks: patch.remarks,
           last_edited_by: user.id,
@@ -923,10 +923,13 @@ function HRModule() {
                   <Label>Time In</Label>
                   <Select
                     value={editing.time_arrival?.slice(0, 5) ?? ""}
-                    onValueChange={(v) => setEditing({ ...editing, time_arrival: v })}
+                    onValueChange={(v) =>
+                      setEditing({ ...editing, time_arrival: v === "__clear__" ? "" : v })
+                    }
                   >
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent className="max-h-72">
+                      <SelectItem value="__clear__">Clear</SelectItem>
                       {TIME_SLOTS.map((s) => (
                         <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                       ))}
@@ -937,10 +940,13 @@ function HRModule() {
                   <Label>Time Out</Label>
                   <Select
                     value={editing.time_out?.slice(0, 5) ?? ""}
-                    onValueChange={(v) => setEditing({ ...editing, time_out: v })}
+                    onValueChange={(v) =>
+                      setEditing({ ...editing, time_out: v === "__clear__" ? "" : v })
+                    }
                   >
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent className="max-h-72">
+                      <SelectItem value="__clear__">Clear</SelectItem>
                       {TIME_SLOTS.map((s) => (
                         <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                       ))}

@@ -460,7 +460,7 @@ function SAModule() {
                                   setRow(t.id, { time_out: v === "__clear__" ? "" : v })
                                 }
                               >
-                                <SelectTrigger className="h-9 w-28"><SelectValue placeholder="—" /></SelectTrigger>
+                                <SelectTrigger className="h-9 w-28"><SelectValue placeholder="Optional" /></SelectTrigger>
                                 <SelectContent className="max-h-72">
                                   <SelectItem value="__clear__">Clear</SelectItem>
                                   {TIME_SLOTS.map((s) => (
