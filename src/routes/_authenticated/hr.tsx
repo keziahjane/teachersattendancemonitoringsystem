@@ -610,8 +610,8 @@ function HRModule() {
               const isReviewed = reviewedKeys.includes(date);
               return (
               <section
-                key={key}
-                className={`space-y-2 rounded-md ${key === highlightKey ? "ring-2 ring-primary p-2" : ""}`}
+                key={date}
+                className={`space-y-2 rounded-md ${date === highlightKey ? "ring-2 ring-primary p-2" : ""}`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
