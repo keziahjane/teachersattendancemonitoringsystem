@@ -335,16 +335,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      recorded_slots: {
-        Args: { _date: string }
-        Returns: {
-          room_assignment: string
-          teacher_id: string
-          time_arrival: string
-          time_out: string
-        }[]
-      }
-      recorded_teacher_ids: { Args: { _date: string }; Returns: string[] }
     }
     Enums: {
       app_role: "student_assistant" | "hr"
