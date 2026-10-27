@@ -145,9 +145,19 @@ function SAModule() {
       let sent = 0;
       try {
         for (const batch of batches) {
+          const date = batch.records[0]?.date_submitted as string | undefined;
+          const { data: done } = date
+            ? await supabase.rpc("recorded_teacher_ids", { _date: date })
+            : { data: [] };
+          const doneSet = new Set((done ?? []) as string[]);
+          const fresh = batch.records.filter((r) => !doneSet.has(r.teacher_id));
+          if (fresh.length === 0) {
+            removeBatch(batch.id);
+            continue;
+          }
           const { data, error } = await supabase
             .from("attendance_records")
-            .insert(batch.records)
+            .insert(fresh)
             .select("id");
           if (error) throw error;
           const { error: notifyError } = await supabase
@@ -250,6 +260,16 @@ function SAModule() {
       if (!isOnline()) return saveOffline();
 
       try {
+        const { data: done } = await supabase.rpc("recorded_teacher_ids", {
+          _date: payload[0]!.date_submitted as string,
+        });
+        const doneSet = new Set((done ?? []) as string[]);
+        const dupes = selected.filter((t) => doneSet.has(t.id));
+        if (dupes.length > 0) {
+          throw new Error(
+            `Already recorded today: ${dupes.map((t) => t.full_name).join(", ")}. Untick them to avoid duplicate records.`,
+          );
+        }
         const { data, error } = await supabase
           .from("attendance_records")
           .insert(payload)
