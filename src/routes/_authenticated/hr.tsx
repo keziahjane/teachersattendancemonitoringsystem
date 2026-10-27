@@ -132,7 +132,7 @@ function HRModule() {
   const [page, setPage] = useState(0);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
-  // Batch keys (date|time|submitter) Admin has already reviewed from a notification.
+  // Date keys Admin has already reviewed from a notification.
   const [reviewedKeys, setReviewedKeys] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
     try {
@@ -503,8 +503,8 @@ function HRModule() {
             <div className="space-y-1.5">
               <CardTitle>Master Attendance Table</CardTitle>
               <CardDescription>
-                {filtered.length} record{filtered.length === 1 ? "" : "s"} in {groups.length}{" "}
-                submission batch{groups.length === 1 ? "" : "es"} — newest first, never merged
+                {filtered.length} record{filtered.length === 1 ? "" : "s"} across {groups.length}{" "}
+                date{groups.length === 1 ? "" : "s"} — newest first, teacher names A–Z
               </CardDescription>
             </div>
             <Button
@@ -610,7 +610,7 @@ function HRModule() {
               const date = key.split("|")[0]!;
               const time = key.split("|")[1]!;
               const submitter = rows[0]?.profiles?.full_name ?? "Unknown";
-              const isReviewed = reviewedKeys.includes(key);
+              const isReviewed = reviewedKeys.includes(date);
               return (
               <section
                 key={key}
@@ -619,7 +619,7 @@ function HRModule() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="rounded-md bg-secondary px-3 py-1.5 text-sm font-bold uppercase tracking-wide">
-                      Date Submitted: {date} · {formatTimeExact(time)} · {submitter} · {rows.length}{" "}
+                      Date Submitted: {date} · {rows.length}{" "}
                       record{rows.length === 1 ? "" : "s"}
                     </div>
                     {isReviewed && <Badge variant="secondary">Reviewed &amp; recorded</Badge>}
