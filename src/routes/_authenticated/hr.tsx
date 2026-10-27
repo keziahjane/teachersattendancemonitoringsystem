@@ -132,7 +132,7 @@ function HRModule() {
   const [page, setPage] = useState(0);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
-  // Batch keys (date|time|submitter) Admin has already reviewed from a notification.
+  // Date keys Admin has already reviewed from a notification.
   const [reviewedKeys, setReviewedKeys] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
     try {
@@ -232,11 +232,7 @@ function HRModule() {
   useEffect(() => {
     if (!batchView || batchRecords.length === 0) return;
     const keys = [
-      ...new Set(
-        batchRecords.map(
-          (r) => `${r.date_submitted}|${r.time_submitted}|${r.submitted_by ?? "unknown"}`,
-        ),
-      ),
+      ...new Set(batchRecords.map((r) => r.date_submitted)),
     ];
     addReviewedKeys(keys);
     setHighlightKey(keys[0] ?? null);
@@ -294,16 +290,24 @@ function HRModule() {
 
 
   const groups = useMemo(() => {
-    // One section per submission batch (date + exact time + submitter) so a new
-    // submission is never merged into an older one.
+    // One section per Date Submitted. Rows inside a date are ordered
+    // alphabetically by teacher name.
     const map = new Map<string, RecordRow[]>();
     for (const r of filtered) {
-      const key = `${r.date_submitted}|${r.time_submitted}|${r.submitted_by ?? "unknown"}`;
-      const list = map.get(key);
+      const list = map.get(r.date_submitted);
       if (list) list.push(r);
-      else map.set(key, [r]);
+      else map.set(r.date_submitted, [r]);
     }
-    return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+    return [...map.entries()]
+      .map(([date, rows]) => [
+        date,
+        rows.sort(
+          (a, b) =>
+            (a.teachers?.full_name ?? "").localeCompare(b.teachers?.full_name ?? "") ||
+            a.time_submitted.localeCompare(b.time_submitted),
+        ),
+      ] as [string, RecordRow[]])
+      .sort((a, b) => b[0].localeCompare(a[0]));
   }, [filtered]);
 
   const pageCount = Math.max(1, Math.ceil(groups.length / DATES_PER_PAGE));
@@ -499,8 +503,8 @@ function HRModule() {
             <div className="space-y-1.5">
               <CardTitle>Master Attendance Table</CardTitle>
               <CardDescription>
-                {filtered.length} record{filtered.length === 1 ? "" : "s"} in {groups.length}{" "}
-                submission batch{groups.length === 1 ? "" : "es"} — newest first, never merged
+                {filtered.length} record{filtered.length === 1 ? "" : "s"} across {groups.length}{" "}
+                date{groups.length === 1 ? "" : "s"} — newest first, teacher names A–Z
               </CardDescription>
             </div>
             <Button
@@ -602,20 +606,17 @@ function HRModule() {
               </p>
             )}
 
-            {visibleGroups.map(([key, rows]) => {
-              const date = key.split("|")[0]!;
-              const time = key.split("|")[1]!;
-              const submitter = rows[0]?.profiles?.full_name ?? "Unknown";
-              const isReviewed = reviewedKeys.includes(key);
+            {visibleGroups.map(([date, rows]) => {
+              const isReviewed = reviewedKeys.includes(date);
               return (
               <section
-                key={key}
-                className={`space-y-2 rounded-md ${key === highlightKey ? "ring-2 ring-primary p-2" : ""}`}
+                key={date}
+                className={`space-y-2 rounded-md ${date === highlightKey ? "ring-2 ring-primary p-2" : ""}`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="rounded-md bg-secondary px-3 py-1.5 text-sm font-bold uppercase tracking-wide">
-                      Date Submitted: {date} · {formatTimeExact(time)} · {submitter} · {rows.length}{" "}
+                      Date Submitted: {date} · {rows.length}{" "}
                       record{rows.length === 1 ? "" : "s"}
                     </div>
                     {isReviewed && <Badge variant="secondary">Reviewed &amp; recorded</Badge>}
