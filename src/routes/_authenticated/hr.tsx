@@ -606,10 +606,7 @@ function HRModule() {
               </p>
             )}
 
-            {visibleGroups.map(([key, rows]) => {
-              const date = key.split("|")[0]!;
-              const time = key.split("|")[1]!;
-              const submitter = rows[0]?.profiles?.full_name ?? "Unknown";
+            {visibleGroups.map(([date, rows]) => {
               const isReviewed = reviewedKeys.includes(date);
               return (
               <section
