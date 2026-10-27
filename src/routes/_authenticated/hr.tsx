@@ -232,11 +232,7 @@ function HRModule() {
   useEffect(() => {
     if (!batchView || batchRecords.length === 0) return;
     const keys = [
-      ...new Set(
-        batchRecords.map(
-          (r) => `${r.date_submitted}|${r.time_submitted}|${r.submitted_by ?? "unknown"}`,
-        ),
-      ),
+      ...new Set(batchRecords.map((r) => r.date_submitted)),
     ];
     addReviewedKeys(keys);
     setHighlightKey(keys[0] ?? null);
@@ -294,16 +290,24 @@ function HRModule() {
 
 
   const groups = useMemo(() => {
-    // One section per submission batch (date + exact time + submitter) so a new
-    // submission is never merged into an older one.
+    // One section per Date Submitted. Rows inside a date are ordered
+    // alphabetically by teacher name.
     const map = new Map<string, RecordRow[]>();
     for (const r of filtered) {
-      const key = `${r.date_submitted}|${r.time_submitted}|${r.submitted_by ?? "unknown"}`;
-      const list = map.get(key);
+      const list = map.get(r.date_submitted);
       if (list) list.push(r);
-      else map.set(key, [r]);
+      else map.set(r.date_submitted, [r]);
     }
-    return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+    return [...map.entries()]
+      .map(([date, rows]) => [
+        date,
+        rows.sort(
+          (a, b) =>
+            (a.teachers?.full_name ?? "").localeCompare(b.teachers?.full_name ?? "") ||
+            a.time_submitted.localeCompare(b.time_submitted),
+        ),
+      ] as [string, RecordRow[]])
+      .sort((a, b) => b[0].localeCompare(a[0]));
   }, [filtered]);
 
   const pageCount = Math.max(1, Math.ceil(groups.length / DATES_PER_PAGE));
