@@ -147,10 +147,10 @@ function SAModule() {
         for (const batch of batches) {
           const date = batch.records[0]?.date_submitted as string | undefined;
           const { data: done } = date
-            ? await supabase.rpc("recorded_teacher_ids", { _date: date })
+            ? await supabase.rpc("recorded_slots", { _date: date })
             : { data: [] };
-          const doneSet = new Set((done ?? []) as string[]);
-          const fresh = batch.records.filter((r) => !doneSet.has(r.teacher_id));
+          const doneSet = new Set((done ?? []).map(slotKey));
+          const fresh = batch.records.filter((r) => !doneSet.has(slotKey(r)));
           if (fresh.length === 0) {
             removeBatch(batch.id);
             continue;
@@ -260,14 +260,15 @@ function SAModule() {
       if (!isOnline()) return saveOffline();
 
       try {
-        const { data: done } = await supabase.rpc("recorded_teacher_ids", {
+        const { data: done } = await supabase.rpc("recorded_slots", {
           _date: payload[0]!.date_submitted as string,
         });
-        const doneSet = new Set((done ?? []) as string[]);
-        const dupes = selected.filter((t) => doneSet.has(t.id));
+        const doneSet = new Set((done ?? []).map(slotKey));
+        const dupeIds = new Set(payload.filter((r) => doneSet.has(slotKey(r))).map((r) => r.teacher_id));
+        const dupes = selected.filter((t) => dupeIds.has(t.id));
         if (dupes.length > 0) {
           throw new Error(
-            `Already recorded today: ${dupes.map((t) => t.full_name).join(", ")}. Untick them to avoid duplicate records.`,
+            `Already recorded today with the same room and time: ${dupes.map((t) => t.full_name).join(", ")}. Change the room or time, or untick them.`,
           );
         }
         const { data, error } = await supabase
@@ -556,4 +557,14 @@ function SAModule() {
       </main>
     </div>
   );
+}
+
+function slotKey(r: {
+  teacher_id: string;
+  room_assignment: string;
+  time_arrival: string | null;
+  time_out: string | null;
+}) {
+  const t = (v: string | null) => (v ? v.slice(0, 5) : "");
+  return `${r.teacher_id}|${r.room_assignment}|${t(r.time_arrival)}|${t(r.time_out)}`;
 }
