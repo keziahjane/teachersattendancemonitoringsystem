@@ -335,6 +335,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      recorded_teacher_ids: { Args: { _date: string }; Returns: string[] }
     }
     Enums: {
       app_role: "student_assistant" | "hr"
